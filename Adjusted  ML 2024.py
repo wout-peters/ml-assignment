@@ -33,44 +33,37 @@ print(y_train.value_counts(normalize=True))
 
 # Define the hyperparameters and their possible values to search
 param_grid = {
-    'iterations': [200, 500],
-    'learning_rate': [0.1] 
+    'iterations': [1000, 2000, 3000],
+    'learning_rate': [0.03, 0.05, 0.1],
+    'depth': [6, 8, 10],
 }
-
 # Create a CatBoost Classifier
 catboost = CatBoostClassifier()
 
-# Use Stratified K-Folds Cross-Validation
-stratified_kfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-
-# Perform Grid Search with StratifiedKFold cross-validation
-grid_search = GridSearchCV(estimator=catboost, param_grid=param_grid, cv=stratified_kfold)
+# Perform Grid Search with 5 fold cross-validation
+grid_search = GridSearchCV(estimator=catboost, param_grid=param_grid, cv=5)
 grid_search.fit(X_train, y_train)
 
 # Print the best parameters and their corresponding score
 print("Best Parameters: ", grid_search.best_params_)
 print("Best Score: ", grid_search.best_score_)
 
-# Predict on the test set
 pred = grid_search.predict(X_test)
 list_of_pred = pred.tolist()
 
-# Calculate accuracy and confusion matrix
 accuracy = accuracy_score(y_test, list_of_pred)
 conf_matrix = confusion_matrix(y_test, pred)
 
 # Extract TP, TN, FP, FN from the confusion matrix
 tn, fp, fn, tp = conf_matrix.ravel()
 
-print("Out of sample accuracy:", accuracy)
-print("accuracyTn:", tn / (tn + fn))
-print("accuracyTp:", tp / (tp + fp))
+print(" Out of sample accuracy  :",accuracy)
+print("accuracyTn  :", tn/(tn+fn))
+print("accuracyTp  :", tp/(tp+fp))
 
-# Predict on the test data
 test_pred = grid_search.predict(X_out)
 list_testpred = test_pred.tolist()
 
-# Save predictions to a file
-with open("predictions.txt", "w") as fh:
+with open("predictions.txt","w") as fh:
     for i in list_testpred:
         fh.write(str(i))
