@@ -36,7 +36,7 @@ param_grid = {
     'iterations': [1000, 2000, 3000],
     'learning_rate': [0.03, 0.05, 0.1],
     'depth': [6, 8, 10],
-    'loss_function': ['CrossEntropy'],
+    'loss_function': ['CrossEntropy']
 }
 # Create a CatBoost Classifier
 catboost = CatBoostClassifier()
